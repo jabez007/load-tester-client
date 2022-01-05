@@ -1,0 +1,43 @@
+{
+  "name": "load-tester-client",
+  "version": "1.0.0",
+  "description": "a cURL like client to run load tests against a service",
+  "main": "dist/index.js",
+  "scripts": {
+    "tsc": "ttsc",
+    "lint": "eslint --fix src/**/*.ts",
+    "prebuild": "npm run lint",
+    "build": "npm run tsc",
+    "pretest": "npm run build",
+    "test": "mocha --recursive"
+  },
+  "keywords": [
+    "cURL",
+    "Benchmark",
+    "Load"
+  ],
+  "author": "Jimmy McCann",
+  "license": "MIT",
+  "homepage": "#readme",
+  "devDependencies": {
+    "@types/node": "^12.6.8",
+    "@types/yargs": "^16.0.0",
+    "@typescript-eslint/eslint-plugin": "^1.13.0",
+    "@typescript-eslint/parser": "^1.13.0",
+    "@zerollup/ts-transform-paths": "^1.7.3",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.2.0",
+    "eslint-plugin-import": "^2.18.2",
+    "mocha": "^6.2.0",
+    "ttypescript": "^1.5.7",
+    "typescript": "^3.5.3"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "yargs": "^16.2.0"
+  },
+  "bundledDependencies": [
+    "axios",
+    "yargs"
+  ]
+}
