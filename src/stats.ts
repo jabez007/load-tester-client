@@ -24,8 +24,8 @@ export function pushFailure(item: number): number {
 }
 
 export function sendStats(): void {
-    // @ts-ignore
-    process.send(stats);
+    // Workers report to the primary over IPC
+    process.send?.(stats);
 }
 
 export function mergeStats(message: typeof stats): number {
@@ -33,21 +33,21 @@ export function mergeStats(message: typeof stats): number {
 }
 
 function displayStat(stat: number[]): void {
-    function average(stats: number[]): number {
-        return stats.reduce((acc, item): number => acc + item, 0) / stats.length
+    function average(values: number[]): number {
+        return values.reduce((acc, item): number => acc + item, 0) / values.length
     }
-    function median(stats: number[]): number {
-        if(stats.length === 0) {
+    function median(values: number[]): number {
+        if(values.length === 0) {
             return 0;
         }
       
-        stats.sort((a, b): number => a-b);
+        values.sort((a, b): number => a-b);
       
-        const half = Math.floor(stats.length / 2);
-        if (stats.length % 2) {
-            return stats[half];
+        const half = Math.floor(values.length / 2);
+        if (values.length % 2) {
+            return values[half];
         }
-        return (stats[half - 1] + stats[half]) / 2.0;
+        return (values[half - 1] + values[half]) / 2.0;
     }
     console.log(`\tMax Response Time: ${Math.max(...stat)}`);
     console.log(`\tMean Response Time: ${average(stat)}`);

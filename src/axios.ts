@@ -51,11 +51,11 @@ export function axiosCommand(argv: Arguments, isSingle = false): void {
         return config;
     });
     */
-    // @ts-ignore
     axios({
         method: `${argv._[0]}`,
         url: `${argv._[1]}`,
-        headers: argv.headers,
+        // yargs turns --h.name=value into { name: value }
+        headers: argv.headers as Record<string, string> | undefined,
         auth: auth,
         params: argv.params,
         data: argv.body

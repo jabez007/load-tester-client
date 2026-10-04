@@ -52,4 +52,4 @@ clusterArgv(
         }
     )
     .help()
-    .argv;
+    .parse();
