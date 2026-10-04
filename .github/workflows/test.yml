@@ -1,10 +1,9 @@
 name: Test
 
+# Every push, including master and release tags. Pull requests come from
+# branches in this repo, so their pushes already run these checks.
 on:
   push:
-    branches-ignore:
-      - main
-      - master
 
 permissions:
   contents: read
