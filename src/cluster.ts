@@ -1,11 +1,11 @@
 import cluster from "cluster";
 import os from "os";
-import yargs from "yargs";
-import { axiosCommand } from "./axios";
-import { mergeStats, statsDisplay } from "./stats";
+import type { Argv, Arguments } from "yargs";
+import { axiosCommand } from "./axios.js";
+import { mergeStats, statsDisplay } from "./stats.js";
 
-export function clusterArgv(yargs: yargs.Argv): yargs.Argv {
-    return yargs
+export function clusterArgv(cli: Argv): Argv {
+    return cli
         .option("workers", {
             alias: "w",
             describe: "Number of worker processes to spin up",
@@ -52,7 +52,7 @@ function prompt(question: string, resolving = "resolving..."): Promise<string> {
     });
 }
 
-function runCluster(argv: yargs.Arguments, numWorkers: number): Promise<void> {
+function runCluster(argv: Arguments, numWorkers: number): Promise<void> {
     console.log(`Cluster master is setting up ${numWorkers} worker${numWorkers > 1 ? "s" : ""}...`);
     return new Promise((resolve): void => {
         let workers = 0;
@@ -84,7 +84,7 @@ function runCluster(argv: yargs.Arguments, numWorkers: number): Promise<void> {
 }
 
 async function clusterMaster(
-    argv: yargs.Arguments,
+    argv: Arguments,
     stages: number[],
     isSingle = false
 ): Promise<void> {
@@ -108,10 +108,10 @@ async function clusterMaster(
     }
 }
 
-export function loadTest(argv: yargs.Arguments): void {
+export function loadTest(argv: Arguments): void {
     const stages = (argv.workers as number[]).filter((n): boolean => !Number.isNaN(n));
     const isSingle = stages.length === 1 && stages[0] === 1 && argv.run === 0;
-    if (cluster.isMaster) {
+    if (cluster.isPrimary) {
         clusterMaster(argv, stages, isSingle);
     } else {
         axiosCommand(argv, isSingle);

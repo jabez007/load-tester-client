@@ -1,9 +1,9 @@
 import axios, { AxiosResponse } from "axios";
-import yargs from "yargs";
-import { pushSuccess, pushFailure, sendStats } from "./stats";
+import type { Argv, Arguments } from "yargs";
+import { pushSuccess, pushFailure, sendStats } from "./stats.js";
 
-export function commonArgv(yargs: yargs.Argv): yargs.Argv {
-    return yargs
+export function commonArgv(cli: Argv): Argv {
+    return cli
         .option('headers', {
             alias: 'h',
             describe: 'Headers to send with every request. Use dot notation, i.e. --h.content-type=application/json'
@@ -22,8 +22,8 @@ export function commonArgv(yargs: yargs.Argv): yargs.Argv {
         });
 }
 
-export function withBodyArgv(yargs: yargs.Argv): yargs.Argv {
-    return commonArgv(yargs)
+export function withBodyArgv(cli: Argv): Argv {
+    return commonArgv(cli)
         .option('body', {
             alias: 'b',
             describe: 'The body to send in the POST request',
@@ -32,7 +32,7 @@ export function withBodyArgv(yargs: yargs.Argv): yargs.Argv {
 
 const { stdout } = process;
 
-export function axiosCommand(argv: yargs.Arguments, isSingle = false): void {
+export function axiosCommand(argv: Arguments, isSingle = false): void {
     const auth =
         argv.username && argv.password
             ? {
@@ -70,11 +70,12 @@ export function axiosCommand(argv: yargs.Arguments, isSingle = false): void {
                 : '*'
             );
         })
-        .catch((err: Error): void => {
+        .catch((err: Error & { response?: AxiosResponse }): void => {
             pushFailure((new Date()).getTime() - start);
+            // A refused or timed-out request has no response to print
             stdout.write(isSingle
-                // @ts-ignore
-                ? `${err.name}: ${err.message}\n${err.response.data}`
+                ? `${err.name}: ${err.message}\n` +
+                    (err.response ? `${JSON.stringify(err.response.data, null, 2)}\n` : '')
                 : 'x'
             );
         })

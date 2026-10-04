@@ -1,8 +1,8 @@
 import fs from "fs";
-import yargs from "yargs";
+import type { Argv, Arguments } from "yargs";
 
-export function outputArgv(yargs: yargs.Argv): yargs.Argv {
-    return yargs
+export function outputArgv(cli: Argv): Argv {
+    return cli
         .option('output', {
             alias: 'o',
             describe: 'Filename to write response statistics to. Defaults to hostname from service URL',
@@ -55,7 +55,7 @@ function displayStat(stat: number[]): void {
     console.log(`\tMin Response Time: ${Math.min(...stat)}`);
 }
 
-export function statsDisplay(argv: yargs.Arguments): void {
+export function statsDisplay(argv: Arguments): void {
     fs.writeFile(
         (argv.output as string) || `${(new URL(argv._[1] as string)).hostname}.json`, 
         JSON.stringify(stats, null, 2), 

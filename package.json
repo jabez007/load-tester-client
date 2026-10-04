@@ -1,15 +1,26 @@
 {
-  "name": "load-tester-client",
+  "name": "@jabez007/load-tester-client",
   "version": "1.0.0",
-  "description": "a cURL like client to run load tests against a service",
-  "main": "dist/index.js",
+  "description": "A cURL-like client to run load tests against a service",
+  "type": "module",
+  "bin": {
+    "load-tester-client": "./dist/index.js"
+  },
+  "files": [
+    "dist/**/*",
+    "README.md"
+  ],
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
   "scripts": {
-    "tsc": "ttsc",
-    "lint": "eslint --fix src/**/*.ts",
-    "prebuild": "npm run lint",
-    "build": "npm run tsc",
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint . --fix",
+    "lint:check": "eslint .",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json --noEmit",
     "pretest": "npm run build",
-    "test": "mocha --recursive"
+    "test": "mocha",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "cURL",
@@ -18,26 +29,31 @@
   ],
   "author": "Jimmy McCann",
   "license": "MIT",
-  "homepage": "#readme",
-  "devDependencies": {
-    "@types/node": "^12.6.8",
-    "@types/yargs": "^16.0.0",
-    "@typescript-eslint/eslint-plugin": "^1.13.0",
-    "@typescript-eslint/parser": "^1.13.0",
-    "@zerollup/ts-transform-paths": "^1.7.3",
-    "eslint": "^5.16.0",
-    "eslint-config-airbnb-base": "^13.2.0",
-    "eslint-plugin-import": "^2.18.2",
-    "mocha": "^6.2.0",
-    "ttypescript": "^1.5.7",
-    "typescript": "^3.5.3"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jabez007/load-tester-client.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jabez007/load-tester-client/issues"
+  },
+  "homepage": "https://github.com/jabez007/load-tester-client#readme",
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
-    "axios": "^0.19.2",
-    "yargs": "^16.2.0"
+    "axios": "^1.20.0",
+    "yargs": "^18.2.0"
   },
-  "bundledDependencies": [
-    "axios",
-    "yargs"
-  ]
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^20.19.43",
+    "@types/yargs": "^17.0.35",
+    "eslint": "^10.12.0",
+    "globals": "^17.13.0",
+    "mocha": "^12.0.3",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.71.0"
+  }
 }
