@@ -1,8 +1,8 @@
 import fs from "fs";
-import yargs from "yargs";
+import type { Argv, Arguments } from "yargs";
 
-export function outputArgv(yargs: yargs.Argv): yargs.Argv {
-    return yargs
+export function outputArgv(cli: Argv): Argv {
+    return cli
         .option('output', {
             alias: 'o',
             describe: 'Filename to write response statistics to. Defaults to hostname from service URL',
@@ -24,8 +24,8 @@ export function pushFailure(item: number): number {
 }
 
 export function sendStats(): void {
-    // @ts-ignore
-    process.send(stats);
+    // Workers report to the primary over IPC
+    process.send?.(stats);
 }
 
 export function mergeStats(message: typeof stats): number {
@@ -33,21 +33,21 @@ export function mergeStats(message: typeof stats): number {
 }
 
 function displayStat(stat: number[]): void {
-    function average(stats: number[]): number {
-        return stats.reduce((acc, item): number => acc + item, 0) / stats.length
+    function average(values: number[]): number {
+        return values.reduce((acc, item): number => acc + item, 0) / values.length
     }
-    function median(stats: number[]): number {
-        if(stats.length === 0) {
+    function median(values: number[]): number {
+        if(values.length === 0) {
             return 0;
         }
       
-        stats.sort((a, b): number => a-b);
+        values.sort((a, b): number => a-b);
       
-        const half = Math.floor(stats.length / 2);
-        if (stats.length % 2) {
-            return stats[half];
+        const half = Math.floor(values.length / 2);
+        if (values.length % 2) {
+            return values[half];
         }
-        return (stats[half - 1] + stats[half]) / 2.0;
+        return (values[half - 1] + values[half]) / 2.0;
     }
     console.log(`\tMax Response Time: ${Math.max(...stat)}`);
     console.log(`\tMean Response Time: ${average(stat)}`);
@@ -55,7 +55,7 @@ function displayStat(stat: number[]): void {
     console.log(`\tMin Response Time: ${Math.min(...stat)}`);
 }
 
-export function statsDisplay(argv: yargs.Arguments): void {
+export function statsDisplay(argv: Arguments): void {
     fs.writeFile(
         (argv.output as string) || `${(new URL(argv._[1] as string)).hostname}.json`, 
         JSON.stringify(stats, null, 2), 

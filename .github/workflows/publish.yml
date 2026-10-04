@@ -1,0 +1,47 @@
+name: Use Shared Action to Publish
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  publish_to_npm:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # The OIDC ID token is used for npm trusted publishing.
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Shared Publish to NPM
+        uses: McCann-Hub/create-typescript-template/.github/shared/npm/publish@master
+        with:
+          node_version: 22.x
+          # Runs npm stage publish, which works with any token and for a first
+          # publish. Approve each release with 2FA on npmjs.com or with
+          # `npm stage approve`.
+          staged: true
+        env:
+          # Only used when trusted publishing isn't set up, e.g. the first publish
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  publish_to_ghpr:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Shared Publish to GHPR
+        uses: McCann-Hub/create-typescript-template/.github/shared/ghpr/publish@master
+        with:
+          node_version: 22.x
+        env:
+          GHPR_TOKEN: ${{ secrets.GITHUB_TOKEN }}

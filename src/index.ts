@@ -1,53 +1,55 @@
-
+#!/usr/bin/env node
 import yargs from "yargs";
-import { commonArgv, withBodyArgv } from "./axios";
-import { clusterArgv, loadTest } from "./cluster";
-import { outputArgv } from "./stats";
+import { hideBin } from "yargs/helpers";
+import type { Argv, Arguments } from "yargs";
+import { commonArgv, withBodyArgv } from "./axios.js";
+import { clusterArgv, loadTest } from "./cluster.js";
+import { outputArgv } from "./stats.js";
 
 clusterArgv(
     outputArgv(
-        yargs(process.argv.slice(2))
+        yargs(hideBin(process.argv))
     )
 )
     .command(
         ['post', 'POST'],
         'HTTP POST method',
-        function (yargs: yargs.Argv): yargs.Argv {
-            return withBodyArgv(yargs);
+        function (cli: Argv): Argv {
+            return withBodyArgv(cli);
         },
-        function (argv: yargs.Arguments): void {
+        function (argv: Arguments): void {
             loadTest(argv);
         }
     )
     .command(
         ['get', 'GET'],
         'HTTP GET method',
-        function (yargs: yargs.Argv): yargs.Argv {
-            return commonArgv(yargs);
+        function (cli: Argv): Argv {
+            return commonArgv(cli);
         },
-        function (argv: yargs.Arguments): void {
+        function (argv: Arguments): void {
             loadTest(argv);
         }
     )
     .command(
         ['put', 'PUT'],
         'HTTP PUT method',
-        function (yargs: yargs.Argv): yargs.Argv {
-            return withBodyArgv(yargs);
+        function (cli: Argv): Argv {
+            return withBodyArgv(cli);
         },
-        function (argv: yargs.Arguments): void {
+        function (argv: Arguments): void {
             loadTest(argv);
         }
     )
     .command(
         ['head', 'HEAD'],
         'HTTP HEAD method',
-        function (yargs: yargs.Argv): yargs.Argv {
-            return commonArgv(yargs);
+        function (cli: Argv): Argv {
+            return commonArgv(cli);
         },
-        function (argv: yargs.Arguments): void {
+        function (argv: Arguments): void {
             loadTest(argv);
         }
     )
     .help()
-    .argv;
+    .parse();
